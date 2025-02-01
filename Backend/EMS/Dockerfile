@@ -1,29 +1,14 @@
+# Use an official Java runtime as a parent image
+FROM openjdk:17-jdk-slim
 
-# Use an official JDK base image
-FROM eclipse-temurin:17-jdk AS build
-
-# Set working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy Maven project files
-COPY pom.xml mvnw ./
-COPY .mvn .mvn
-COPY src ./src
+# Copy the built JAR file into the container
+COPY target/your-app-name.jar app.jar
 
-# Build the application
-RUN ./mvnw package -DskipTests
-
-# Use a lightweight JDK/JRE image for running the application
-FROM eclipse-temurin:17-jre
-
-# Set working directory
-WORKDIR /app
-
-# Copy the built JAR from the previous stage
-COPY --from=build /app/target/*.jar spring-boot-ems-backend.jar
-
-# Expose application port
+# Expose the port the app runs on
 EXPOSE 8080
 
 # Run the application
-CMD ["java", "-jar", "spring-boot-ems-backend.jar"]
+CMD ["java", "-jar", "app.jar"]
